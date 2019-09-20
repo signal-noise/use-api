@@ -1,6 +1,7 @@
 # use-api
 
 [![NPM version][npm-image]][npm-url]
+[![Actions Status][ci-image]][ci-url]
 [![PR Welcome][npm-downloads-image]][npm-downloads-url]
 
 A simple react hook for loading data from an api with polling support.
@@ -62,3 +63,5 @@ const App = () = {
 [npm-url]: https://npmjs.org/package/use-api
 [npm-downloads-image]: https://img.shields.io/npm/dm/@signal-noise/use-api.svg
 [npm-downloads-url]: https://npmcharts.com/compare/@signal-noise/use-api?minimal=true
+[ci-image]: https://github.com/signal-noise/use-api/workflows/node-ci/badge.svg
+[ci-url]: https://github.com/signal-noise/use-api/actions
