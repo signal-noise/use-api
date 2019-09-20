@@ -13,7 +13,7 @@ e.g. "Data refuses to load when accessing via https..."
 
 e.g. `0.1.0`
 
-> WHat version of React are you using use-api within?
+> What version of React are you using use-api within?
 
 e.g. `16.9.0`
 
