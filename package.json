@@ -1,0 +1,36 @@
+{
+  "name": "@signal-noise/use-api",
+  "description": "A react hook to load data from a simple api.",
+  "version": "0.1.0",
+  "main": "index.js",
+  "keywords": [
+    "react",
+    "hooks",
+    "hook",
+    "react-hook",
+    "data",
+    "api",
+    "loading",
+    "polling"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test:cov": "jest --coverage"
+  },
+  "author": "John Chipps-Harding (john@signal-noise.com)",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "^2.0.1",
+    "axios-mock-adapter": "^1.17.0",
+    "jest": "^24.8.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-test-renderer": "^16.9.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0"
+  }
+}
