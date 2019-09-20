@@ -3,7 +3,7 @@ const axios = require("axios");
 
 const { CancelToken } = axios;
 
-const useApi = (apiEndpoint, pollInterval) => {
+const useApi = (apiEndpoint, pollInterval, postData) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +19,8 @@ const useApi = (apiEndpoint, pollInterval) => {
 
     // Make call to the API
     axios(apiEndpoint, {
-      cancelToken: source.token
+      cancelToken: source.token,
+      ...(postData && { data: postData, method: "post" })
     })
       .then(response => {
         setError(null);

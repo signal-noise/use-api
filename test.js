@@ -3,25 +3,42 @@ const axios = require("axios");
 const useApi = require("./index");
 const { renderHook, act } = require("@testing-library/react-hooks");
 
-describe("performs GET requests", () => {
+describe("performs requests", () => {
   let mock;
   const url = "http://mock";
 
-  beforeAll(() => {
+  beforeEach(() => {
     mock = new MockAdapter(axios);
     jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
-  afterAll(() => {
+  afterEach(() => {
     jest.useRealTimers();
     mock.restore();
   });
 
-  it("loads data from a url", async () => {
+  it("loads data from a url using GET", async () => {
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() => useApi(url));
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("loads data from a url using POST", async () => {
+    const postData = { query: "hello" };
+    mock.onPost(url, postData).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, postData)
+    );
 
     expect(result.current.data).toEqual({});
     expect(result.current.loading).toBeTruthy();

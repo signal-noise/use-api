@@ -26,21 +26,50 @@ npm i @signal-noise/use-api
 
 ## Usage
 
-Here is an example of an api call to retrieve a list of people which polls every 10 seconds, with a manual refresh button.
+Here is an example of a `GET` api call to retrieve a list of people which polls every 10 seconds, with a manual refresh button.
 
 ```JSX
 import React from 'react';
 import useApi from '@signal-noise/use-api';
 import PeopleList from './PeopleList';
 
-const App = () = {
+const PeopleList = () = {
   const { data, loading, error, refresh } = useApi("https://some-api.com", 10000);
 
+  const people = data.people || [];
+
   return (
-    {loading && <p>Loading...</p>}
-    {error && <p>{error}</p>}
-    <button onClick={refresh} disabled={loading}>Refresh</button>
-    {!loading && <PeopleList people={data.people}>}
+    <>
+      {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
+      <button onClick={refresh} disabled={loading}>Refresh</button>
+      <PeopleList people={people} />
+    </>
+  );
+}
+```
+
+You can optionally pass in data as the final argument to turn the request into a `POST` request. Below is an example of a simple user search. (You may wish to debounce the user input 🤷‍)
+
+```JSX
+import React, { useState } from 'react';
+import useApi from '@signal-noise/use-api';
+import PeopleList from './PeopleList';
+
+const PeopleSearch = () = {
+  const [keywords, setKeywords] = useState("marcel");
+
+  const { data, loading, error, refresh } = useApi("https://some-api.com", 0, { keywords });
+
+  const people = data.people || [];
+
+  return (
+    <>
+      {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
+      <input value={keywords} onChange={e=>setKeywords(e.target.value)} />
+      <PeopleList people={data.people} />
+    </>
   );
 }
 ```
@@ -50,7 +79,8 @@ const App = () = {
 ### Input
 
 - `apiEndpoint` - A URL to request data from.
-- `pollInterval` - How often to re-request updated data.
+- `pollInterval` - How often to re-request updated data. Pass 0 to disable polling (its default behaviour).
+- `postData` - Pass an object to change the request to a POST and pass along the data.
 
 ### Output
 
