@@ -11,4 +11,4 @@ e.g. "The description of the `refresh` function needs expanding..."
 
 > What solution would you like to see?
 
-e.g. "I suggest rewriting it so it covers the folling topics in detail..."
+e.g. "I suggest rewriting it so it covers the following topics in detail..."
