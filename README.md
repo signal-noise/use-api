@@ -49,7 +49,7 @@ const PeopleList = () = {
 }
 ```
 
-You can optionally pass in data as the final argument to turn the request into a `POST` request. Below is an example of a simple user search. (You may wish to debounce the user input 🤷‍)
+You can optionally pass in data as the final argument to turn the request into a `POST` request. Below is a minimal example of a user search UI. (You may wish to debounce the user input 🤷‍)
 
 ```JSX
 import React, { useState } from 'react';
@@ -59,14 +59,12 @@ import PeopleList from './PeopleList';
 const PeopleSearch = () = {
   const [keywords, setKeywords] = useState("marcel");
 
-  const { data, loading, error, refresh } = useApi("https://some-api.com", 0, { keywords });
+  const { data } = useApi("https://some-api.com", 0, { keywords });
 
   const people = data.people || [];
 
   return (
     <>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
       <input value={keywords} onChange={e=>setKeywords(e.target.value)} />
       <PeopleList people={data.people} />
     </>
