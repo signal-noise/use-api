@@ -21,7 +21,7 @@ const { data, loading, error, refresh } = useApi("https://some-api.com", 10000);
 Install this package with `npm`.
 
 ```bash
-npm i @signal-noise/use-api -s
+npm i @signal-noise/use-api
 ```
 
 ## Usage
