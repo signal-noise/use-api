@@ -3,7 +3,7 @@
 I'm really happy that you're interested in helping out with this little project.
 
 As this is very early days for the project there's not a lot in the way of
-resources, but please check out the [documentation](../README.md), and also the
+resources, but please check out the [documentation](./README.md), and also the
 [list of issues](https://github.com/signal-noise/use-api/issues).
 
 Please submit an issue if you need help with anything.
@@ -22,7 +22,7 @@ pass. Testing is automated using GitHub Actions CI.
 Please send a
 [GitHub Pull Request to use-api](https://github.com/signal-noise/use-api/pull/new/master)
 with a clear list of what you've done (read more about
-[pull requests](http://help.github.com/pull-requests/)). When you send a pull
+[pull requests](https://help.github.com/en/articles/about-pull-requests)). When you send a pull
 request, please make sure you've covered off all the points in the template.
 
 Make sure you've read about our workflow (below); in essence make sure each Pull
