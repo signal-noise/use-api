@@ -1,8 +1,23 @@
-Please ensure that:
+<!---
+Please read the following. Pull requests that do not adhere to these guidelines will very likely be closed.
 
-- This PR has a concise, useful name
-- The description contains:
-  - A summary of each of the main changes implemented in this PR
-  - `fixes` links to any relevant issues
-  - Details of any steps that current developers will need to take to stack up-to-date; i.e. installing new requirements
-- Any relevant documentation is updated as part of the PR
+Each pull request should, with the exception of minor documentation fixes, be associated with an open issue. If there is an associated open issue, then please continue by answering these two questions:  -->
+
+> Which issue, if any, is this issue related to?
+
+e.g. "Closes #000" or "None, as it's a documentation fix."
+
+> Is there anything in the PR that needs further explanation?
+
+e.g. "No, it's self explanatory."
+
+<!---
+Please read the following. Pull requests that do not adhere to these guidelines will very likely be closed.  -->
+
+> What changes are implemented in this PR
+
+e.g. "No, it's self explanatory."
+
+> Which issue, if any, is this issue related to?
+
+e.g. "Closes #000" or "None, as it's a documentation fix."
