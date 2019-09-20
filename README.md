@@ -10,11 +10,15 @@ A simple react hook for loading data from an api with polling support.
 
 If you need a simple way to load data quickly this is for you. It allows you to very easily request data from any endpoint and have it avaliable in your React application.
 
-You can optionally specify a polling interval and manually trigger a refresh. It also gracefully cancels any open requests if you decide to change the URL and restarts timers if the polling interval changes.
+You can optionally specify a polling interval and manually trigger a refresh. It also restarts timers if the polling interval changes.
 
 ```javascript
 const { data, loading, error, refresh } = useApi("https://some-api.com", 10000);
 ```
+
+## Compatibility
+
+Please note this hook is built upon [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and may need polyfilling (specifically in Internet Explorer).
 
 ## Installation
 

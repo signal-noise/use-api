@@ -1,7 +1,4 @@
 const { useEffect, useState } = require("react");
-const axios = require("axios");
-
-const { CancelToken } = axios;
 
 const useApi = (apiEndpoint, pollInterval) => {
   const [data, setData] = useState({});
@@ -12,22 +9,17 @@ const useApi = (apiEndpoint, pollInterval) => {
   useEffect(() => {
     let timeout;
 
-    // Create a token that we sign the request with so it can be cancelled if need be
-    const source = CancelToken.source();
-
     setLoading(true);
 
     // Make call to the API
-    axios(apiEndpoint, {
-      cancelToken: source.token
-    })
-      .then(response => {
+    fetch(apiEndpoint)
+      .then(response => response.json())
+      .then(json => {
         setError(null);
-        setData(response.data);
-      }) // Set the recieved data
+        setData(json);
+      })
       .catch(thrown => {
-        // Only error on genuine errors, not cancellations
-        if (!axios.isCancel(thrown)) setError(thrown.message);
+        setError(thrown.message);
       })
       .finally(() => {
         // Clear the loading and refreshing flags
@@ -41,7 +33,6 @@ const useApi = (apiEndpoint, pollInterval) => {
     // Cleanup, clear a timeout and cancel the request.
     return () => {
       if (timeout) clearTimeout(timeout);
-      source.cancel();
     };
   }, [poll, apiEndpoint, pollInterval]);
 

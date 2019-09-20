@@ -11,7 +11,8 @@
     "data",
     "api",
     "loading",
-    "polling"
+    "polling",
+    "fetch"
   ],
   "scripts": {
     "test": "jest",
@@ -24,13 +25,10 @@
   },
   "devDependencies": {
     "@testing-library/react-hooks": "^2.0.1",
-    "axios-mock-adapter": "^1.17.0",
     "jest": "^24.8.0",
+    "jest-fetch-mock": "^2.1.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-test-renderer": "^16.9.0"
-  },
-  "dependencies": {
-    "axios": "^0.19.0"
   }
 }

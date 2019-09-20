@@ -1,39 +1,40 @@
-const MockAdapter = require("axios-mock-adapter");
-const axios = require("axios");
 const useApi = require("./index");
 const { renderHook, act } = require("@testing-library/react-hooks");
 
+global.fetch = require("jest-fetch-mock");
+
 describe("performs GET requests", () => {
-  let mock;
   const url = "http://mock";
 
   beforeAll(() => {
-    mock = new MockAdapter(axios);
     jest.clearAllMocks();
     jest.useFakeTimers();
   });
 
   afterAll(() => {
     jest.useRealTimers();
-    mock.restore();
   });
 
   it("loads data from a url", async () => {
-    mock.onGet(url).reply(200, "response");
+    const response = { data: "1" };
+    fetch.mockResponseOnce(JSON.stringify(response));
 
     const { result, waitForNextUpdate } = renderHook(() => useApi(url));
 
     expect(result.current.data).toEqual({});
+    expect(result.current.error).toEqual(null);
+    expect(result.current.refresh).toBeInstanceOf(Function);
     expect(result.current.loading).toBeTruthy();
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response");
+    expect(result.current.data).toEqual(response);
     expect(result.current.loading).toBeFalsy();
   });
 
   it("loads and polls data from a url", async () => {
-    mock.onGet(url).reply(200, "response");
+    const response = { data: "1" };
+    fetch.mockResponseOnce(JSON.stringify(response));
 
     const { result, waitForNextUpdate } = renderHook(() => useApi(url, 1000));
 
@@ -42,10 +43,11 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response");
+    expect(result.current.data).toEqual(response);
     expect(result.current.loading).toBeFalsy();
 
-    mock.onGet(url).reply(200, "response2");
+    const response2 = { data: "2" };
+    fetch.mockResponseOnce(JSON.stringify(response2));
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -53,10 +55,11 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response2");
+    expect(result.current.data).toEqual(response2);
     expect(result.current.loading).toBeFalsy();
 
-    mock.onGet(url).reply(200, "response3");
+    const response3 = { data: "3" };
+    fetch.mockResponseOnce(JSON.stringify(response3));
 
     act(() => {
       jest.advanceTimersByTime(1000);
@@ -64,12 +67,13 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response3");
+    expect(result.current.data).toEqual(response3);
     expect(result.current.loading).toBeFalsy();
   });
 
   it("can be manually refreshed", async () => {
-    mock.onGet(url).reply(200, "response");
+    const response = { data: "1" };
+    fetch.mockResponseOnce(JSON.stringify(response));
 
     const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
 
@@ -78,10 +82,11 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response");
+    expect(result.current.data).toEqual(response);
     expect(result.current.loading).toBeFalsy();
 
-    mock.onGet(url).reply(200, "response2");
+    const response2 = { data: "2" };
+    fetch.mockResponseOnce(JSON.stringify(response2));
 
     act(() => {
       result.current.refresh();
@@ -89,12 +94,13 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.data).toEqual("response2");
+    expect(result.current.data).toEqual(response2);
     expect(result.current.loading).toBeFalsy();
   });
 
   it("returns an error on request error", async () => {
-    mock.onGet(url).reply(404, "response");
+    const errorMessage = "Some API Error";
+    fetch.mockReject(new Error(errorMessage));
 
     const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
 
@@ -103,7 +109,7 @@ describe("performs GET requests", () => {
 
     await waitForNextUpdate();
 
-    expect(result.current.error).toEqual("Request failed with status code 404");
+    expect(result.current.error).toEqual(errorMessage);
     expect(result.current.loading).toBeFalsy();
   });
 });
