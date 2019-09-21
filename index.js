@@ -9,6 +9,9 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
 
+  // Function to force a refresh
+  const refresh = () => setPoll(poll + 1);
+
   useEffect(() => {
     let timeout;
 
@@ -26,6 +29,7 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         (method === "get" ? { params: payload } : { data: payload }))
     })
       .then(response => {
+        // Make sure there are no errors reported
         setError(null);
         // Set the recieved data
         setData(response.data);
@@ -35,12 +39,11 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         if (!axios.isCancel(thrown)) setError(thrown.message);
       })
       .finally(() => {
-        // Clear the loading and refreshing flags
+        // Clear the loading flag
         setLoading(false);
 
         // Poll if specified to do so
-        if (pollInterval)
-          timeout = setTimeout(() => setPoll(poll + 1), pollInterval);
+        if (pollInterval) timeout = setTimeout(refresh, pollInterval);
       });
 
     // Cleanup, clear a timeout and cancel the request.
@@ -49,9 +52,6 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       source.cancel();
     };
   }, [poll, apiEndpoint, pollInterval]);
-
-  // Function to force a refresh
-  const refresh = () => setPoll(poll + 1);
 
   return { data, loading, error, refresh };
 };
