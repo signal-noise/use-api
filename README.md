@@ -89,7 +89,7 @@ const PeopleSearch = () = {
 - `refresh`: A function to call to re-request the data.
 
 [npm-image]: https://img.shields.io/npm/v/@signal-noise/use-api.svg?style=flat-square&logo=react
-[npm-url]: https://npmjs.org/package/use-api
+[npm-url]: https://npmjs.org/package/@signal-noise/use-api
 [npm-downloads-image]: https://img.shields.io/npm/dm/@signal-noise/use-api.svg
 [npm-downloads-url]: https://npmcharts.com/compare/@signal-noise/use-api?minimal=true
 [ci-image]: https://github.com/signal-noise/use-api/workflows/node-ci/badge.svg
