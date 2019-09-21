@@ -49,7 +49,7 @@ const PeopleList = () = {
 }
 ```
 
-You can optionally pass in data as the final argument to turn the request into a `POST` request. Below is a minimal example of a user search UI. (You may wish to debounce the user input 🤷‍)
+You can optionally pass in data and specify the request type. Below is a minimal example of a user search UI. (You may wish to debounce the user input 🤷‍)
 
 ```JSX
 import React, { useState } from 'react';
@@ -57,9 +57,9 @@ import useApi from '@signal-noise/use-api';
 import PeopleList from './PeopleList';
 
 const PeopleSearch = () = {
-  const [keywords, setKeywords] = useState("marcel");
+  const [keywords, setKeywords] = useState("kazumi");
 
-  const { data } = useApi("https://some-api.com", 0, { keywords });
+  const { data } = useApi("https://some-api.com", 0, { keywords }, "post");
 
   const people = data.people || [];
 
@@ -77,8 +77,9 @@ const PeopleSearch = () = {
 ### Input
 
 - `apiEndpoint` - A URL to request data from.
-- `pollInterval` - How often to re-request updated data. Pass 0 to disable polling (its default behaviour).
-- `postData` - Pass an object to change the request to a POST and pass along the data.
+- `pollInterval` - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
+- `payload` - A data object to send in the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
+- `method` - Set the request type, either `get` or `post`. (defaults to `get`)
 
 ### Output
 

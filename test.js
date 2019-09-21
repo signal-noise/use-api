@@ -32,12 +32,33 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
+  it("sends querystring data and loads data from a url using GET", async () => {
+    const params = { query: "hello" };
+    mock
+      .onGet(url)
+      .reply(config =>
+        config.params.query === "hello" ? [200, "response"] : [400, "error"]
+      );
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, params)
+    );
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
   it("loads data from a url using POST", async () => {
     const postData = { query: "hello" };
     mock.onPost(url, postData).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, postData)
+      useApi(url, 0, postData, "post")
     );
 
     expect(result.current.data).toEqual({});

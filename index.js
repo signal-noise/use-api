@@ -3,7 +3,7 @@ const axios = require("axios");
 
 const { CancelToken } = axios;
 
-const useApi = (apiEndpoint, pollInterval, postData) => {
+const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,17 +15,21 @@ const useApi = (apiEndpoint, pollInterval, postData) => {
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();
 
+    // Set loading to be true
     setLoading(true);
 
     // Make call to the API
     axios(apiEndpoint, {
+      method,
       cancelToken: source.token,
-      ...(postData && { data: postData, method: "post" })
+      ...(payload &&
+        (method === "get" ? { params: payload } : { data: payload }))
     })
       .then(response => {
         setError(null);
+        // Set the recieved data
         setData(response.data);
-      }) // Set the recieved data
+      })
       .catch(thrown => {
         // Only error on genuine errors, not cancellations
         if (!axios.isCancel(thrown)) setError(thrown.message);
