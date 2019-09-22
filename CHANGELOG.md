@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.1.2
+
+- Added: npmignore
+
 ## 0.1.1
 
 - Changed: NPM Link inside README.
