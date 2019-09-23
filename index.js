@@ -9,6 +9,8 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
 
+  method = method.toLowerCase();
+
   // Function to force a refresh
   const refresh = () => setPoll(poll + 1);
 
