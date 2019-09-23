@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file.
 
-## Unreleased
+## 0.1.3
 
 - Added: `payload` and `method` arguments.
 - Change: LICENSE copyright.
