@@ -3,39 +3,55 @@ const axios = require("axios");
 
 const { CancelToken } = axios;
 
-const useApi = (apiEndpoint, pollInterval) => {
+const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
 
+  // Function to force a refresh
+  const refresh = () => setPoll(poll + 1);
+
   useEffect(() => {
     let timeout;
+
+    if (method.toLowerCase) method = method.toLowerCase();
+
+    if (!["get", "post"].includes(method)) {
+      setLoading(false);
+      setError("Invalid request method type, must be either post or get.");
+      return;
+    }
 
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();
 
+    // Set loading to be true
     setLoading(true);
 
     // Make call to the API
     axios(apiEndpoint, {
-      cancelToken: source.token
+      method,
+      cancelToken: source.token,
+      ...(payload &&
+        (method === "get" ? { params: payload } : { data: payload }))
     })
       .then(response => {
+        // Make sure there are no errors reported
         setError(null);
+        // Set the recieved data
         setData(response.data);
-      }) // Set the recieved data
+      })
       .catch(thrown => {
         // Only error on genuine errors, not cancellations
         if (!axios.isCancel(thrown)) setError(thrown.message);
       })
       .finally(() => {
-        // Clear the loading and refreshing flags
+        // Clear the loading flag
         setLoading(false);
 
         // Poll if specified to do so
-        if (pollInterval)
-          timeout = setTimeout(() => setPoll(poll + 1), pollInterval);
+        if (pollInterval) timeout = setTimeout(refresh, pollInterval);
       });
 
     // Cleanup, clear a timeout and cancel the request.
@@ -44,9 +60,6 @@ const useApi = (apiEndpoint, pollInterval) => {
       source.cancel();
     };
   }, [poll, apiEndpoint, pollInterval]);
-
-  // Function to force a refresh
-  const refresh = () => setPoll(poll + 1);
 
   return { data, loading, error, refresh };
 };

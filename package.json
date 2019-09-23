@@ -23,7 +23,8 @@
   ],
   "scripts": {
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "release": "np"
   },
   "author": "John Chipps-Harding (john@signal-noise.com)",
   "license": "MIT",
