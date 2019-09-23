@@ -9,13 +9,19 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
 
-  method = method.toLowerCase();
-
   // Function to force a refresh
   const refresh = () => setPoll(poll + 1);
 
   useEffect(() => {
     let timeout;
+
+    if (method.toLowerCase) method = method.toLowerCase();
+
+    if (!["get", "post"].includes(method)) {
+      setLoading(false);
+      setError("Invalid request method type, must be either post or get.");
+      return;
+    }
 
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();

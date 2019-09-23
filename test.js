@@ -53,6 +53,45 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
+  it("allows different formats of GET method param (GET)", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, { query: "hello" }, "GET")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows different formats of GET method param (Get)", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, { query: "hello" }, "Get")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows different formats of GET method param (gEt)", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, { query: "hello" }, "gEt")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
   it("loads data from a url using POST", async () => {
     const postData = { query: "hello" };
     mock.onPost(url, postData).reply(200, "response");
@@ -67,6 +106,70 @@ describe("performs requests", () => {
     await waitForNextUpdate();
 
     expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows different formats of POST method param (Post)", async () => {
+    const postData = { query: "hello" };
+    mock.onPost(url, postData).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, postData, "Post")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows different formats of POST method param (POST)", async () => {
+    const postData = { query: "hello" };
+    mock.onPost(url, postData).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, postData, "POST")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows different formats of POST method param (pOst)", async () => {
+    const postData = { query: "hello" };
+    mock.onPost(url, postData).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, postData, "pOst")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("warns about bad finding a bad string in method type", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, { query: "hello" }, "POSTITNOIE")
+    );
+
+    expect(result.current.error).toBeTruthy();
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("warns about garbage in method type", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, { query: "hello" }, { something: "wrong" })
+    );
+
+    expect(result.current.error).toBeTruthy();
     expect(result.current.loading).toBeFalsy();
   });
 
