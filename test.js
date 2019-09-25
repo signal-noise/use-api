@@ -234,6 +234,29 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
+  it("refreshes when payload changes", async () => {
+    const postData = { query: "hello" };
+    const postData2 = { query: "hello2" };
+    mock.onPost(url, postData).reply(200, "response");
+    mock.onPost(url, postData2).reply(200, "response2");
+
+    const { result, waitForNextUpdate, rerender } = renderHook(() =>
+      useApi(url, 0, postData, "post")
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    rerender(url, 0, postData2, "post");
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
+    expect(result.current.loading).toBeFalsy();
+  });
+
   it("returns an error on request error", async () => {
     mock.onGet(url).reply(404, "response");
 
