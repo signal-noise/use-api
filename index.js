@@ -1,10 +1,13 @@
 const { useEffect, useState } = require("react");
 const axios = require("axios");
+const isEqual = require("lodash.isequal");
 
 const { CancelToken } = axios;
 
 const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
+  const [changed, setChanged] = useState(false);
   const [data, setData] = useState({});
+  const [lastData, setLastData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
@@ -29,6 +32,8 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
     // Set loading to be true
     setLoading(true);
 
+    setChanged(false);
+
     // Make call to the API
     axios(apiEndpoint, {
       method,
@@ -39,8 +44,12 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       .then(response => {
         // Make sure there are no errors reported
         setError(null);
-        // Set the recieved data
-        setData(response.data);
+        // Set the received data ONLY IF its changed, redraw performance gain!
+        if (!isEqual(response.data, lastData)) {
+          setChanged(true);
+          setLastData(response.data);
+          setData(response.data);
+        }
       })
       .catch(thrown => {
         // Only error on genuine errors, not cancellations
@@ -61,7 +70,7 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
     };
   }, [poll, apiEndpoint, pollInterval]);
 
-  return { data, loading, error, refresh };
+  return { data, loading, changed, error, refresh };
 };
 
 module.exports = useApi;

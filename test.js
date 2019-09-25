@@ -247,4 +247,50 @@ describe("performs requests", () => {
     expect(result.current.error).toEqual("Request failed with status code 404");
     expect(result.current.loading).toBeFalsy();
   });
+
+  it("notified when data has changed", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    mock.onGet(url).reply(200, "response2");
+
+    act(() => {
+      result.current.refresh();
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
+    expect(result.current.changed).toBeTruthy();
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("does not notify when data has not changed", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    mock.onGet(url).reply(200, "response");
+
+    act(() => {
+      result.current.refresh();
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.changed).toBeFalsy();
+    expect(result.current.loading).toBeFalsy();
+  });
 });

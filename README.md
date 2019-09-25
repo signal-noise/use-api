@@ -13,7 +13,10 @@ If you need a simple way to load data quickly this is for you. It allows you to 
 You can optionally specify a polling interval and manually trigger a refresh. It also gracefully cancels any open requests if you decide to change the URL and restarts timers if the polling interval changes.
 
 ```javascript
-const { data, loading, error, refresh } = useApi("https://some-api.com", 10000);
+const { data, loading, changed, error, refresh } = useApi(
+  "https://some-api.com",
+  10000
+);
 ```
 
 ## Installation
@@ -85,6 +88,7 @@ const PeopleSearch = () = {
 
 - `data`: The data returned from the API.
 - `loading`: A boolean signifying if the data is currently being loaded.
+- `changed`: A boolean signifying if the data changed during the last load.
 - `error`: A string representation of an error if it occurred during loading.
 - `refresh`: A function to call to re-request the data.
 

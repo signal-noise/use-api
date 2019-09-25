@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased
+
+- Added: `changed` property.
+
 ## 0.1.3
 
 - Added: `payload` and `method` arguments.
