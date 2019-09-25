@@ -54,10 +54,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (GET)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "GET")
+      useApi(url, 0, params, "GET")
     );
 
     await waitForNextUpdate();
@@ -67,10 +68,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (Get)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "Get")
+      useApi(url, 0, params, "Get")
     );
 
     await waitForNextUpdate();
@@ -80,10 +82,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (gEt)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "gEt")
+      useApi(url, 0, params, "gEt")
     );
 
     await waitForNextUpdate();
@@ -236,12 +239,20 @@ describe("performs requests", () => {
 
   it("refreshes when payload changes", async () => {
     const postData = { query: "hello" };
-    const postData2 = { query: "hello2" };
+    const postData2 = { query: "world" };
     mock.onPost(url, postData).reply(200, "response");
-    mock.onPost(url, postData2).reply(200, "response2");
 
-    const { result, waitForNextUpdate, rerender } = renderHook(() =>
-      useApi(url, 0, postData, "post")
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ apiEndpoint, pollInterval, payload, method }) =>
+        useApi(apiEndpoint, pollInterval, payload, method),
+      {
+        initialProps: {
+          apiEndpoint: url,
+          pollInterval: 0,
+          payload: postData,
+          method: "post"
+        }
+      }
     );
 
     await waitForNextUpdate();
@@ -249,7 +260,14 @@ describe("performs requests", () => {
     expect(result.current.data).toEqual("response");
     expect(result.current.loading).toBeFalsy();
 
-    rerender(url, 0, postData2, "post");
+    mock.onPost(url, postData2).reply(200, "response2");
+
+    rerender({
+      apiEndpoint: url,
+      pollInterval: 0,
+      payload: postData2,
+      method: "post"
+    });
 
     await waitForNextUpdate();
 
@@ -303,8 +321,6 @@ describe("performs requests", () => {
 
     expect(result.current.data).toEqual("response");
     expect(result.current.loading).toBeFalsy();
-
-    mock.onGet(url).reply(200, "response");
 
     act(() => {
       result.current.refresh();

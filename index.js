@@ -68,7 +68,7 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       if (timeout) clearTimeout(timeout);
       source.cancel();
     };
-  }, [poll, apiEndpoint, pollInterval]);
+  }, [poll, apiEndpoint, pollInterval, payload, method]);
 
   return { data, loading, changed, error, refresh };
 };
