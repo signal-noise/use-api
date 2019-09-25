@@ -332,4 +332,29 @@ describe("performs requests", () => {
     expect(result.current.changed).toBeFalsy();
     expect(result.current.loading).toBeFalsy();
   });
+
+  it("request can be aborted mid-request", async () => {
+    mock.onGet(url).reply(() => new Promise(() => {}));
+    mock.onGet(url + "2").reply(200, "response2");
+
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ apiEndpoint, pollInterval }) => useApi(apiEndpoint, pollInterval),
+      {
+        initialProps: {
+          apiEndpoint: url,
+          pollInterval: 0
+        }
+      }
+    );
+
+    rerender({
+      apiEndpoint: url + "2",
+      pollInterval: 0
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
+    expect(result.current.loading).toBeFalsy();
+  });
 });
