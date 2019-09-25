@@ -154,7 +154,7 @@ describe("performs requests", () => {
   it("warns about bad finding a bad string in method type", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useApi(url, 0, { query: "hello" }, "POSTITNOIE")
     );
 
@@ -165,7 +165,7 @@ describe("performs requests", () => {
   it("warns about garbage in method type", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useApi(url, 0, { query: "hello" }, { something: "wrong" })
     );
 

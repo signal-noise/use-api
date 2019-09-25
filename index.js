@@ -12,13 +12,13 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
 
+  if (method.toLowerCase) method = method.toLowerCase();
+
   // Function to force a refresh
   const refresh = () => setPoll(poll + 1);
 
   useEffect(() => {
     let timeout;
-
-    if (method.toLowerCase) method = method.toLowerCase();
 
     if (!["get", "post"].includes(method)) {
       setLoading(false);
