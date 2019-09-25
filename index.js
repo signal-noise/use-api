@@ -1,4 +1,4 @@
-const { useEffect, useState } = require("react");
+const { useEffect, useState, useRef } = require("react");
 const axios = require("axios");
 const isEqual = require("lodash.isequal");
 
@@ -7,15 +7,12 @@ const { CancelToken } = axios;
 const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
   const [changed, setChanged] = useState(false);
   const [data, setData] = useState({});
-  const [lastData, setLastData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
+  const lastData = useRef(data);
 
   if (method.toLowerCase) method = method.toLowerCase();
-
-  // Function to force a refresh
-  const refresh = () => setPoll(poll + 1);
 
   useEffect(() => {
     let timeout;
@@ -45,9 +42,9 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         // Make sure there are no errors reported
         setError(null);
         // Set the received data ONLY IF its changed, redraw performance gain!
-        if (!isEqual(response.data, lastData)) {
+        if (!isEqual(response.data, lastData.current)) {
           setChanged(true);
-          setLastData(response.data);
+          lastData.current = response.data;
           setData(response.data);
         }
       })
@@ -60,7 +57,8 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         setLoading(false);
 
         // Poll if specified to do so
-        if (pollInterval) timeout = setTimeout(refresh, pollInterval);
+        if (pollInterval)
+          timeout = setTimeout(() => setPoll(poll + 1), pollInterval);
       });
 
     // Cleanup, clear a timeout and cancel the request.
@@ -68,9 +66,9 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       if (timeout) clearTimeout(timeout);
       source.cancel();
     };
-  }, [poll, apiEndpoint, pollInterval, payload, method]);
+  }, [poll, setPoll, apiEndpoint, pollInterval, payload, method, lastData]);
 
-  return { data, loading, changed, error, refresh };
+  return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };
 
 module.exports = useApi;
