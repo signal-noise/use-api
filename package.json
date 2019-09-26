@@ -1,7 +1,7 @@
 {
   "name": "@signal-noise/use-api",
   "description": "A react hook to load data from a simple api.",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "main": "index.js",
   "homepage": "https://github.com/signal-noise/use-api#readme",
   "repository": {
