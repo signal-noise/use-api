@@ -44,11 +44,17 @@ const useApi = (
       .then(response => {
         // Make sure there are no errors reported
         setError(null);
-        // Set the received data ONLY IF its changed, redraw performance gain!
-        if (!isEqual(response.data, lastData.current)) {
-          lastData.current = response.data;
+
+        // Only do change detection if change is defined.
+        if (changed) {
+          if (!isEqual(response.data, lastData.current)) {
+            // Set the received data ONLY IF its changed, redraw performance gain!
+            lastData.current = response.data;
+            setData(response.data);
+            changed(response.data);
+          }
+        } else {
           setData(response.data);
-          if (changed) changed(response.data);
         }
       })
       .catch(thrown => {
