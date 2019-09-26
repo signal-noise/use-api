@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
-- Added: `changed` property.
+- Added: `changed` callback argument.
 
 ## 0.1.3
 
