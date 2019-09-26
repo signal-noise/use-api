@@ -291,8 +291,11 @@ describe("performs requests", () => {
 
   it("notified when data has changed", async () => {
     mock.onGet(url).reply(200, "response");
+    const mockChanged = jest.fn();
 
-    const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, null, "get", mockChanged)
+    );
 
     await waitForNextUpdate();
 
@@ -308,14 +311,17 @@ describe("performs requests", () => {
     await waitForNextUpdate();
 
     expect(result.current.data).toEqual("response2");
-    expect(result.current.changed).toBeTruthy();
     expect(result.current.loading).toBeFalsy();
+    expect(mockChanged.mock.calls.length).toBe(2);
   });
 
   it("does not notify when data has not changed", async () => {
     mock.onGet(url).reply(200, "response");
+    const mockChanged = jest.fn();
 
-    const { result, waitForNextUpdate } = renderHook(() => useApi(url, 0));
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, null, "get", mockChanged)
+    );
 
     await waitForNextUpdate();
 
@@ -329,8 +335,8 @@ describe("performs requests", () => {
     await waitForNextUpdate();
 
     expect(result.current.data).toEqual("response");
-    expect(result.current.changed).toBeFalsy();
     expect(result.current.loading).toBeFalsy();
+    expect(mockChanged.mock.calls.length).toBe(1);
   });
 
   it("request can be aborted mid-request", async () => {

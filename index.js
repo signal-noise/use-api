@@ -4,8 +4,13 @@ const isEqual = require("lodash.isequal");
 
 const { CancelToken } = axios;
 
-const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
-  const [changed, setChanged] = useState(false);
+const useApi = (
+  apiEndpoint,
+  pollInterval,
+  payload,
+  method = "get",
+  changed
+) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,8 +34,6 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
     // Set loading to be true
     setLoading(true);
 
-    setChanged(false);
-
     // Make call to the API
     axios(apiEndpoint, {
       method,
@@ -43,9 +46,9 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         setError(null);
         // Set the received data ONLY IF its changed, redraw performance gain!
         if (!isEqual(response.data, lastData.current)) {
-          setChanged(true);
           lastData.current = response.data;
           setData(response.data);
+          if (changed) changed(response.data);
         }
       })
       .catch(thrown => {
@@ -66,7 +69,16 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       if (timeout) clearTimeout(timeout);
       source.cancel();
     };
-  }, [poll, setPoll, apiEndpoint, pollInterval, payload, method, lastData]);
+  }, [
+    poll,
+    setPoll,
+    apiEndpoint,
+    pollInterval,
+    payload,
+    method,
+    lastData,
+    changed
+  ]);
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };

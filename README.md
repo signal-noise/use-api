@@ -83,12 +83,13 @@ const PeopleSearch = () = {
 - `pollInterval` - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
 - `payload` - A data object to send in the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
 - `method` - Set the request type, either `get` or `post`. (defaults to `get`)
+- `changed`: A function to call if the data actually changed during the request.
 
 ### Output
 
 - `data`: The data returned from the API.
 - `loading`: A boolean signifying if the data is currently being loaded.
-- `changed`: A boolean signifying if the data changed during the last load.
+
 - `error`: A string representation of an error if it occurred during loading.
 - `refresh`: A function to call to re-request the data.
 
