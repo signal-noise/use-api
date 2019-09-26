@@ -22,9 +22,10 @@ jobs:
       - name: Install latest npm
         run: npm install --global npm@latest
 
-      - name: npm install and test
+      - name: npm install, lint and test
         run: |
           npm install
+          npm run lint
           npm test -- --ci
         env:
           CI: true

@@ -1,21 +1,26 @@
-const { useEffect, useState } = require("react");
+const { useEffect, useState, useRef } = require("react");
 const axios = require("axios");
+const isEqual = require("lodash.isequal");
 
 const { CancelToken } = axios;
 
-const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
+const useApi = (
+  apiEndpoint,
+  pollInterval,
+  payload,
+  method = "get",
+  changed
+) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
+  const lastData = useRef(data);
 
-  // Function to force a refresh
-  const refresh = () => setPoll(poll + 1);
+  if (method.toLowerCase) method = method.toLowerCase();
 
   useEffect(() => {
     let timeout;
-
-    if (method.toLowerCase) method = method.toLowerCase();
 
     if (!["get", "post"].includes(method)) {
       setLoading(false);
@@ -39,8 +44,18 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       .then(response => {
         // Make sure there are no errors reported
         setError(null);
-        // Set the recieved data
-        setData(response.data);
+
+        // Only do change detection if change is defined.
+        if (changed) {
+          if (!isEqual(response.data, lastData.current)) {
+            // Set the received data ONLY IF its changed, redraw performance gain!
+            lastData.current = response.data;
+            setData(response.data);
+            changed(response.data);
+          }
+        } else {
+          setData(response.data);
+        }
       })
       .catch(thrown => {
         // Only error on genuine errors, not cancellations
@@ -51,7 +66,8 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
         setLoading(false);
 
         // Poll if specified to do so
-        if (pollInterval) timeout = setTimeout(refresh, pollInterval);
+        if (pollInterval)
+          timeout = setTimeout(() => setPoll(poll + 1), pollInterval);
       });
 
     // Cleanup, clear a timeout and cancel the request.
@@ -59,9 +75,18 @@ const useApi = (apiEndpoint, pollInterval, payload, method = "get") => {
       if (timeout) clearTimeout(timeout);
       source.cancel();
     };
-  }, [poll, apiEndpoint, pollInterval]);
+  }, [
+    poll,
+    setPoll,
+    apiEndpoint,
+    pollInterval,
+    payload,
+    method,
+    lastData,
+    changed
+  ]);
 
-  return { data, loading, error, refresh };
+  return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };
 
 module.exports = useApi;

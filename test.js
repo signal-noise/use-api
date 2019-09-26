@@ -54,10 +54,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (GET)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "GET")
+      useApi(url, 0, params, "GET")
     );
 
     await waitForNextUpdate();
@@ -67,10 +68,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (Get)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "Get")
+      useApi(url, 0, params, "Get")
     );
 
     await waitForNextUpdate();
@@ -80,10 +82,11 @@ describe("performs requests", () => {
   });
 
   it("allows different formats of GET method param (gEt)", async () => {
+    const params = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi(url, 0, { query: "hello" }, "gEt")
+      useApi(url, 0, params, "gEt")
     );
 
     await waitForNextUpdate();
@@ -154,7 +157,7 @@ describe("performs requests", () => {
   it("warns about bad finding a bad string in method type", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useApi(url, 0, { query: "hello" }, "POSTITNOIE")
     );
 
@@ -165,7 +168,7 @@ describe("performs requests", () => {
   it("warns about garbage in method type", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useApi(url, 0, { query: "hello" }, { something: "wrong" })
     );
 
@@ -234,6 +237,44 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
+  it("refreshes when payload changes", async () => {
+    const postData = { query: "hello" };
+    const postData2 = { query: "world" };
+    mock.onPost(url, postData).reply(200, "response");
+
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ apiEndpoint, pollInterval, payload, method }) =>
+        useApi(apiEndpoint, pollInterval, payload, method),
+      {
+        initialProps: {
+          apiEndpoint: url,
+          pollInterval: 0,
+          payload: postData,
+          method: "post"
+        }
+      }
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    mock.onPost(url, postData2).reply(200, "response2");
+
+    rerender({
+      apiEndpoint: url,
+      pollInterval: 0,
+      payload: postData2,
+      method: "post"
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
+    expect(result.current.loading).toBeFalsy();
+  });
+
   it("returns an error on request error", async () => {
     mock.onGet(url).reply(404, "response");
 
@@ -245,6 +286,81 @@ describe("performs requests", () => {
     await waitForNextUpdate();
 
     expect(result.current.error).toEqual("Request failed with status code 404");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("notified when data has changed", async () => {
+    mock.onGet(url).reply(200, "response");
+    const mockChanged = jest.fn();
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, null, "get", mockChanged)
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    mock.onGet(url).reply(200, "response2");
+
+    act(() => {
+      result.current.refresh();
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
+    expect(result.current.loading).toBeFalsy();
+    expect(mockChanged.mock.calls.length).toBe(2);
+  });
+
+  it("does not notify when data has not changed", async () => {
+    mock.onGet(url).reply(200, "response");
+    const mockChanged = jest.fn();
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi(url, 0, null, "get", mockChanged)
+    );
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+
+    act(() => {
+      result.current.refresh();
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+    expect(mockChanged.mock.calls.length).toBe(1);
+  });
+
+  it("request can be aborted mid-request", async () => {
+    mock.onGet(url).reply(() => new Promise(() => {}));
+    mock.onGet(url + "2").reply(200, "response2");
+
+    const { result, waitForNextUpdate, rerender } = renderHook(
+      ({ apiEndpoint, pollInterval }) => useApi(apiEndpoint, pollInterval),
+      {
+        initialProps: {
+          apiEndpoint: url,
+          pollInterval: 0
+        }
+      }
+    );
+
+    rerender({
+      apiEndpoint: url + "2",
+      pollInterval: 0
+    });
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response2");
     expect(result.current.loading).toBeFalsy();
   });
 });

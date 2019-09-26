@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased
+
+- Added: `changed` callback argument.
+
 ## 0.1.3
 
 - Added: `payload` and `method` arguments.
