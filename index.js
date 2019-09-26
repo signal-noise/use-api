@@ -16,6 +16,8 @@ const useApi = (
   const [loading, setLoading] = useState(true);
   const [poll, setPoll] = useState(0);
   const lastData = useRef(data);
+  const changedRef = useRef(changed);
+  changedRef.current = changed;
 
   if (method.toLowerCase) method = method.toLowerCase();
 
@@ -46,12 +48,12 @@ const useApi = (
         setError(null);
 
         // Only do change detection if change is defined.
-        if (changed) {
+        if (changedRef.current) {
           if (!isEqual(response.data, lastData.current)) {
             // Set the received data ONLY IF its changed, redraw performance gain!
             lastData.current = response.data;
             setData(response.data);
-            changed(response.data);
+            changedRef.current(response.data);
           }
         } else {
           setData(response.data);
@@ -83,7 +85,7 @@ const useApi = (
     payload,
     method,
     lastData,
-    changed
+    changedRef
   ]);
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
