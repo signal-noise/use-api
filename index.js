@@ -17,7 +17,14 @@ const useApi = (
   const [poll, setPoll] = useState(0);
   const lastData = useRef(data);
   const changedRef = useRef(changed);
+  const payloadRef = useRef(payload);
   changedRef.current = changed;
+
+  // Only apply the new payload if its really changed
+  if (!isEqual(payload, payloadRef.current)) {
+    payloadRef.current = payload;
+  }
+  const currentPayload = payloadRef.current;
 
   if (method.toLowerCase) method = method.toLowerCase();
 
@@ -40,8 +47,10 @@ const useApi = (
     axios(apiEndpoint, {
       method,
       cancelToken: source.token,
-      ...(payload &&
-        (method === "get" ? { params: payload } : { data: payload }))
+      ...(currentPayload &&
+        (method === "get"
+          ? { params: currentPayload }
+          : { data: currentPayload }))
     })
       .then(response => {
         // Make sure there are no errors reported
@@ -82,7 +91,7 @@ const useApi = (
     setPoll,
     apiEndpoint,
     pollInterval,
-    payload,
+    currentPayload,
     method,
     lastData,
     changedRef
