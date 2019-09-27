@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.2.2
+
+- Fixed: `payload` equality fix.
+
 ## 0.2.1
 
 - Fixed: Recursive bug when `changed` is specified.
