@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased
+
+- Changed: Input arguments now a configuration object.
+
 ## 0.2.2
 
 - Fixed: `payload` equality fix.

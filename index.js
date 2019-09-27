@@ -4,13 +4,13 @@ const isEqual = require("lodash.isequal");
 
 const { CancelToken } = axios;
 
-const useApi = (
+const useApi = ({
   apiEndpoint,
-  pollInterval,
+  pollInterval = 0,
   payload,
   method = "get",
   changed
-) => {
+}) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
