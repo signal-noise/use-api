@@ -13,10 +13,10 @@ If you need a simple way to load data quickly this is for you. It allows you to 
 You can optionally specify a polling interval and manually trigger a refresh. It also gracefully cancels any open requests if you decide to change the URL and restarts timers if the polling interval changes.
 
 ```javascript
-const { data, loading, changed, error, refresh } = useApi(
-  "https://some-api.com",
-  10000
-);
+const { data, loading, changed, error, refresh } = useApi({
+  apiEndpoint: "https://some-api.com",
+  pollInterval: 10000
+});
 ```
 
 ## Installation
@@ -37,7 +37,10 @@ import useApi from '@signal-noise/use-api';
 import PeopleList from './PeopleList';
 
 const PeopleList = () = {
-  const { data, loading, error, refresh } = useApi("https://some-api.com", 10000);
+  const { data, loading, error, refresh } = useApi({
+    apiEndpoint: "https://some-api.com",
+    pollInterval: 10000
+  )};
 
   const people = data.people || [];
 
@@ -62,7 +65,11 @@ import PeopleList from './PeopleList';
 const PeopleSearch = () = {
   const [keywords, setKeywords] = useState("kazumi");
 
-  const { data } = useApi("https://some-api.com", 0, { keywords }, "post");
+  const { data } = useApi({
+    apiEndpoint: "https://some-api.com",
+    payload: { keywords },
+    method: "post"
+  });
 
   const people = data.people || [];
 
