@@ -37,6 +37,18 @@ const useApi = ({
       return;
     }
 
+    if (isNaN(pollInterval)) {
+      setLoading(false);
+      setError("Invalid poll interval type, must be a number.");
+      return;
+    }
+
+    if (typeof apiEndpoint !== "string") {
+      setLoading(false);
+      setError("apiEndpoint not a string");
+      return;
+    } 
+
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();
 

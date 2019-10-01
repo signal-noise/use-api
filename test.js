@@ -367,4 +367,50 @@ describe("performs requests", () => {
     expect(result.current.data).toEqual("response2");
     expect(result.current.loading).toBeFalsy();
   });
+
+  it("should reject pollIntervals if NaN", async () => {
+    mock.onGet(apiEndpoint).reply(200, "response");
+    const pollValue = "abc";
+
+    const { result } = renderHook(() =>
+      useApi({ apiEndpoint, pollInterval: pollValue })
+    );
+
+    expect(result.current.error).toBeTruthy();
+
+  });
+
+  it("allows complex object using GET", async () => {
+    const payload = { query: ["hello", 'world', ['abc']] };
+    mock
+      .onGet(apiEndpoint)
+      .reply(config =>
+        // console.log(config.params)
+        config.params.query[2][0] === "abc" ? [200, "response"] : [400, "error"]
+      );
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi({ apiEndpoint, payload })
+    );
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("error when apiEndpoint is not string", async () => {
+    mock.onGet(123).reply(404, "response");
+
+    const { result } = renderHook(() =>
+      useApi({ apiEndpoint: 123 })
+    );
+    
+    expect(result.current.error).toBeTruthy();
+  });
+
+
 });
