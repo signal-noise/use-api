@@ -385,7 +385,6 @@ describe("performs requests", () => {
     mock
       .onGet(apiEndpoint)
       .reply(config =>
-        // console.log(config.params)
         config.params.query[2][0] === "abc" ? [200, "response"] : [400, "error"]
       );
 
@@ -403,7 +402,6 @@ describe("performs requests", () => {
   });
 
   it("error when apiEndpoint is not string", async () => {
-    mock.onGet(123).reply(404, "response");
 
     const { result } = renderHook(() =>
       useApi({ apiEndpoint: 123 })
@@ -412,5 +410,5 @@ describe("performs requests", () => {
     expect(result.current.error).toBeTruthy();
   });
 
-
+  
 });
