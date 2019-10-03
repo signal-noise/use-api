@@ -14,7 +14,7 @@ You can optionally specify a polling interval and manually trigger a refresh. It
 
 ```javascript
 const { data, loading, error, refresh } = useApi({
-  apiEndpoint: "https://some-api.com/api",
+  url: "https://some-api.com/api",
   pollInterval: 10000,
   payload: { keywords: "hello" },
   method: "post",
@@ -41,7 +41,7 @@ import PeopleList from './PeopleList';
 
 const PeopleList = () = {
   const { data, loading, error, refresh } = useApi({
-    apiEndpoint: "https://some-api.com",
+    url: "https://some-api.com",
     pollInterval: 10000
   )};
 
@@ -69,7 +69,7 @@ const PeopleSearch = () = {
   const [keywords, setKeywords] = useState("kazumi");
 
   const { data } = useApi({
-    apiEndpoint: "https://some-api.com",
+    url: "https://some-api.com",
     payload: { keywords },
     method: "post"
   });
@@ -89,7 +89,7 @@ const PeopleSearch = () = {
 
 ### Input
 
-- `apiEndpoint` : Required - A URL to request data from.
+- `url` : Required - A URL to request data from.
 - `pollInterval` : Optional - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
 - `payload` : Optional - A data object to send with the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
 - `method` : Optional - Set the request type, either `get` or `post`. (defaults to `get`)

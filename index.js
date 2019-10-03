@@ -5,7 +5,7 @@ const isEqual = require("lodash.isequal");
 const { CancelToken } = axios;
 
 const useApi = ({
-  apiEndpoint,
+  url,
   pollInterval = 0,
   payload,
   method = "get",
@@ -44,7 +44,7 @@ const useApi = ({
     setLoading(true);
 
     // Make call to the API
-    axios(apiEndpoint, {
+    axios(url, {
       method,
       cancelToken: source.token,
       ...(currentPayload &&
@@ -89,7 +89,7 @@ const useApi = ({
   }, [
     poll,
     setPoll,
-    apiEndpoint,
+    url,
     pollInterval,
     currentPayload,
     method,
