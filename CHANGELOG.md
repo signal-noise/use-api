@@ -4,6 +4,7 @@ All notable changes to this project are documented in this file.
 
 ## Unreleased
 
+- Changed: Renamed `apiEndpoint` to `url`.
 - Changed: Documentation.
 
 ## 0.3.0
