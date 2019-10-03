@@ -8,14 +8,17 @@ A simple react hook for loading data from an api with polling support.
 
 ## Introduction
 
-If you need a simple way to load data quickly this is for you. It allows you to very easily request data from any endpoint and have it avaliable in your React application.
+If you need a simple way to load data quickly this is for you. It allows you to very easily request data from any endpoint and have it available in your React application.
 
 You can optionally specify a polling interval and manually trigger a refresh. It also gracefully cancels any open requests if you decide to change the URL and restarts timers if the polling interval changes.
 
 ```javascript
-const { data, loading, changed, error, refresh } = useApi({
-  apiEndpoint: "https://some-api.com",
-  pollInterval: 10000
+const { data, loading, error, refresh } = useApi({
+  apiEndpoint: "https://some-api.com/api",
+  pollInterval: 10000,
+  payload: { keywords: "hello" },
+  method: "post",
+  changed: data => console.log("The data changed!", data)
 });
 ```
 
@@ -86,11 +89,11 @@ const PeopleSearch = () = {
 
 ### Input
 
-- `apiEndpoint` - A URL to request data from.
-- `pollInterval` - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
-- `payload` - A data object to send in the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
-- `method` - Set the request type, either `get` or `post`. (defaults to `get`)
-- `changed`: A function that is called if the data actually changed during the request. If this is specified, use-api does extra checking and compares old and new data. If data does not change, new data is not propagated and a redraw is saved. Please note, this may have performance repercussions if the data is large as it performs a deep comparison between new and old data to determine if they are equivalent.
+- `apiEndpoint` : Required - A URL to request data from.
+- `pollInterval` : Optional - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
+- `payload` : Optional - A data object to send with the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
+- `method` : Optional - Set the request type, either `get` or `post`. (defaults to `get`)
+- `changed` : Optional - A function that is called if the data actually changed during the request. If this is specified, use-api does extra checking and compares old and new data. If data does not change, new data is not propagated and a redraw is saved. Please note, this may have performance repercussions if the data is large as it performs a deep comparison between new and old data to determine if they are equivalent.
 
 ### Output
 

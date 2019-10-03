@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased
+
+- Changed: Documentation.
+
 ## 0.3.0
 
 - Changed: Input arguments now a configuration object.
