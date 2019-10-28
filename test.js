@@ -402,12 +402,26 @@ describe("performs requests", () => {
   });
 
   it("error when apiEndpoint is not string", async () => {
+    const nonString = 123; 
+    mock.onGet(nonString).reply(200, "response");
 
     const { result } = renderHook(() =>
-      useApi({ apiEndpoint: 123 })
+      useApi({ apiEndpoint: nonString })
     );
     
     expect(result.current.error).toBeTruthy();
+  });
+
+  it("error when changed is not function", async () => {
+    mock.onGet(apiEndpoint).reply(200, "response");
+    const mockChanged = {};
+
+    const { result } = renderHook(() =>
+      useApi({ apiEndpoint, changed: mockChanged })
+    );
+
+    expect(result.current.error).toBeTruthy();
+
   });
 
   
