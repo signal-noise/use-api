@@ -18,26 +18,20 @@ describe("performs requests", () => {
     mock.restore();
   });
 
-
-  it("should fail if apiEndpoint is not set", async () => {
+  it("should fail if url is not set", async () => {
     mock.onGet().reply(200, "response");
 
-    const { result } = renderHook(() =>
-      useApi({ })
-    );
+    const { result } = renderHook(() => useApi({}));
 
-    expect(result.error.message).toEqual('Url not specified');
-
+    expect(result.error.message).toEqual("Url not specified");
   });
 
-  it("should error when apiEndpoint is not string", async () => {
-    const nonString = 123; 
+  it("should error when url is not string", async () => {
+    const nonString = 123;
     mock.onGet(nonString).reply(200, "response");
 
-    const { result } = renderHook(() =>
-      useApi({ url: nonString })
-    );
-    expect(result.error.message).toEqual('Url not a string');
+    const { result } = renderHook(() => useApi({ url: nonString }));
+    expect(result.error.message).toEqual("Url not a string");
   });
 
   it("should reject pollIntervals if NaN", async () => {
@@ -48,18 +42,19 @@ describe("performs requests", () => {
       useApi({ url, pollInterval: pollValue })
     );
 
-    expect(result.error.message).toEqual('Invalid poll interval type, must be number');
-
+    expect(result.error.message).toEqual(
+      "Invalid poll interval type, must be number"
+    );
   });
 
   it("should fail if pollIntervals is less than zero", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result } = renderHook(() => 
-      useApi({url, pollInterval: -1})
+    const { result } = renderHook(() => useApi({ url, pollInterval: -1 }));
+
+    expect(result.error.message).toEqual(
+      "Negative value not valid poll interval"
     );
-    
-    expect(result.error.message).toEqual('Negative value not valid poll interval');
   });
 
   it("converts payload to querystring for GET request", async () => {
@@ -208,12 +203,9 @@ describe("performs requests", () => {
     mock.onGet(url).reply(200, "response");
     const mockChanged = {};
 
-    const { result } = renderHook(() =>
-      useApi({ url, changed: mockChanged })
-    );
+    const { result } = renderHook(() => useApi({ url, changed: mockChanged }));
 
     expect(result.current.error).toBeTruthy();
-
   });
 
   // FUNCTIONAL TESTS
@@ -221,9 +213,7 @@ describe("performs requests", () => {
   it("loads data from a url using GET", async () => {
     mock.onGet(url).reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useApi({ url })
-    );
+    const { result, waitForNextUpdate } = renderHook(() => useApi({ url }));
 
     expect(result.current.data).toEqual({});
     expect(result.current.loading).toBeTruthy();
@@ -458,7 +448,7 @@ describe("performs requests", () => {
   });
 
   it("allows complex object using GET", async () => {
-    const payload = { query: ["hello", 'world', ['abc']] };
+    const payload = { query: ["hello", "world", ["abc"]] };
     mock
       .onGet(url)
       .reply(config =>
@@ -477,6 +467,4 @@ describe("performs requests", () => {
     expect(result.current.data).toEqual("response");
     expect(result.current.loading).toBeFalsy();
   });
-
-  
 });

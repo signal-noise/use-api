@@ -11,7 +11,6 @@ const useApi = ({
   method = "get",
   changed
 }) => {
-
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +19,7 @@ const useApi = ({
   const changedRef = useRef(changed);
   const payloadRef = useRef(payload);
   changedRef.current = changed;
-    
+
   if (!url) {
     throw Error("Url not specified");
   } else if (typeof url !== "string") {
@@ -50,10 +49,10 @@ const useApi = ({
       return;
     }
 
-    if (changedRef.current && typeof changedRef.current !== 'function') {
+    if (changedRef.current && typeof changedRef.current !== "function") {
       setLoading(false);
       setError("Invalid changed type, must be function.");
-      return
+      return;
     }
 
     // Create a token that we sign the request with so it can be cancelled if need be
@@ -116,9 +115,7 @@ const useApi = ({
     changedRef
   ]);
 
-
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };
-
 
 module.exports = useApi;
