@@ -2,6 +2,9 @@ name: node-ci
 
 on: [push]
 
+env:
+  CI: true
+
 jobs:
   test:
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
@@ -26,6 +29,12 @@ jobs:
         run: |
           npm install
           npm run lint
-          npm test -- --ci
-        env:
-          CI: true
+      - name: Test (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          cd ..
+          cd D:\a\signal-noise\use-api
+          npm run jest
+      - name: Test (Unix)
+        if: matrix.os != 'windows-latest'
+        run: npm run jest
