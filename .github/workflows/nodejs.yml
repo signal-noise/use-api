@@ -34,7 +34,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           cd ..
-          cd D:\a\signal-noise\use-api
+          cd D:\a\use-api\use-api
           npm test
       - name: Test (Unix)
         if: matrix.os != 'windows-latest'
