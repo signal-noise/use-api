@@ -35,7 +35,7 @@ jobs:
         run: |
           cd ..
           cd D:\a\signal-noise\use-api
-          npm run jest
+          npm test
       - name: Test (Unix)
         if: matrix.os != 'windows-latest'
-        run: npm run jest
+        run: npm test
