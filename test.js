@@ -18,21 +18,51 @@ describe("performs requests", () => {
     mock.restore();
   });
 
-  it("loads data from a url using GET", async () => {
-    mock.onGet(url).reply(200, "response");
+  it("should error if url is not set", async () => {
+    mock.onGet().reply(200, "response");
 
-    const { result, waitForNextUpdate } = renderHook(() => useApi({ url }));
+    const { result } = renderHook(() => useApi({}));
 
-    expect(result.current.data).toEqual({});
-    expect(result.current.loading).toBeTruthy();
-
-    await waitForNextUpdate();
-
-    expect(result.current.data).toEqual("response");
-    expect(result.current.loading).toBeFalsy();
+    expect(result.error.message).toEqual("Url not specified");
   });
 
-  it("sends querystring data and loads data from a url using GET", async () => {
+  it("should error when url is not string", async () => {
+    const nonString = 123;
+    mock.onGet(nonString).reply(200, "response");
+
+    const { result } = renderHook(() => useApi({ url: nonString }));
+    expect(result.error.message).toEqual("Url not a string");
+  });
+
+  // axios should determine the validity of url
+  it("ensures url is valid", async () => {
+    expect(1).toBeTruthy;
+  });
+
+  it("should reject pollIntervals if NaN", async () => {
+    mock.onGet(url).reply(200, "response");
+    const pollValue = "foo";
+
+    const { result } = renderHook(() =>
+      useApi({ url, pollInterval: pollValue })
+    );
+
+    expect(result.error.message).toEqual(
+      "Invalid poll interval type, must be number"
+    );
+  });
+
+  it("should error if pollIntervals is less than zero", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result } = renderHook(() => useApi({ url, pollInterval: -1 }));
+
+    expect(result.error.message).toEqual(
+      "Negative value not valid poll interval"
+    );
+  });
+
+  it("converts payload to querystring for GET request", async () => {
     const payload = { query: "hello" };
     mock
       .onGet(url)
@@ -53,12 +83,12 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("allows different formats of GET method param (GET)", async () => {
+  it("sends payload as JSON for POST", async () => {
     const payload = { query: "hello" };
-    mock.onGet(url).reply(200, "response");
+    mock.onPost(url, payload).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
-      useApi({ url, payload, method: "GET" })
+      useApi({ url, payload, method: "POST" })
     );
 
     await waitForNextUpdate();
@@ -67,7 +97,7 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("allows different formats of GET method param (Get)", async () => {
+  it("allows variations of capitalised GET method param (GET / get / gEt)", async () => {
     const payload = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
@@ -81,7 +111,7 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("allows different formats of GET method param (gEt)", async () => {
+  it("allows semi-capitalised GET method param (Get)", async () => {
     const payload = { query: "hello" };
     mock.onGet(url).reply(200, "response");
 
@@ -95,16 +125,13 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("loads data from a url using POST", async () => {
+  it("allows different formats of GET method param (gEt)", async () => {
     const payload = { query: "hello" };
     mock.onPost(url, payload).reply(200, "response");
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useApi({ url, payload, method: "post" })
     );
-
-    expect(result.current.data).toEqual({});
-    expect(result.current.loading).toBeTruthy();
 
     await waitForNextUpdate();
 
@@ -154,26 +181,92 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("warns about bad finding a bad string in method type", async () => {
+  it("should error when finding a bad string in method type", async () => {
     const payload = { query: "hello" };
 
     const { result } = renderHook(() =>
       useApi({ url, payload, method: "POSTITNOTE" })
     );
 
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.loading).toBeFalsy();
+    expect(result.error.message).toEqual(
+      "Invalid request method type, must be either post or get."
+    );
   });
 
-  it("warns about garbage in method type", async () => {
+  it("should error when garbage in method type", async () => {
     const payload = { query: "hello" };
-    // mock.onGet(url).reply(200, "response");
 
     const { result } = renderHook(() =>
       useApi({ url, payload, method: { something: "wrong" } })
     );
 
-    expect(result.current.error).toBeTruthy();
+    expect(result.error.message).toEqual(
+      "Invalid request method type, must be either post or get."
+    );
+  });
+
+  it("should error when changed is not function", async () => {
+    mock.onGet(url).reply(200, "response");
+    const mockChanged = {};
+
+    const { result } = renderHook(() => useApi({ url, changed: mockChanged }));
+
+    expect(result.error.message).toEqual(
+      "Invalid changed type, must be function."
+    );
+  });
+
+  // FUNCTIONAL TESTS
+
+  it("loads data from a url using GET", async () => {
+    mock.onGet(url).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() => useApi({ url }));
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("loads data from a url using POST", async () => {
+    const payload = { query: "hello" };
+    mock.onPost(url, payload).reply(200, "response");
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi({ url, payload, method: "post" })
+    );
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("loads data from a url using GET with a payload", async () => {
+    const payload = { query: "hello" };
+    mock
+      .onGet(url)
+      .reply(config =>
+        config.params.query === "hello" ? [200, "response"] : [400, "error"]
+      );
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi({ url, payload })
+    );
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
     expect(result.current.loading).toBeFalsy();
   });
 
@@ -359,6 +452,27 @@ describe("performs requests", () => {
     await waitForNextUpdate();
 
     expect(result.current.data).toEqual("response2");
+    expect(result.current.loading).toBeFalsy();
+  });
+
+  it("allows complex object using GET", async () => {
+    const payload = { query: ["hello", "world", ["abc"]] };
+    mock
+      .onGet(url)
+      .reply(config =>
+        config.params.query[2][0] === "abc" ? [200, "response"] : [400, "error"]
+      );
+
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useApi({ url, payload })
+    );
+
+    expect(result.current.data).toEqual({});
+    expect(result.current.loading).toBeTruthy();
+
+    await waitForNextUpdate();
+
+    expect(result.current.data).toEqual("response");
     expect(result.current.loading).toBeFalsy();
   });
 });

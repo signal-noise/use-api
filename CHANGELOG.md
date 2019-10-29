@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented in this file.
 
+## UNRELEASED
+
+- Added: Further tests
+
 ## 0.4.0
 
 - Changed: Renamed `apiEndpoint` to `url`.

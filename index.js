@@ -20,6 +20,18 @@ const useApi = ({
   const payloadRef = useRef(payload);
   changedRef.current = changed;
 
+  if (!url) {
+    throw Error("Url not specified");
+  } else if (typeof url !== "string") {
+    throw Error("Url not a string");
+  }
+
+  if (pollInterval < 0) {
+    throw Error("Negative value not valid poll interval");
+  } else if (isNaN(pollInterval)) {
+    throw Error("Invalid poll interval type, must be number");
+  }
+
   // Only apply the new payload if its really changed
   if (!isEqual(payload, payloadRef.current)) {
     payloadRef.current = payload;
@@ -28,14 +40,16 @@ const useApi = ({
 
   if (method.toLowerCase) method = method.toLowerCase();
 
+  if (!["get", "post"].includes(method)) {
+    throw Error("Invalid request method type, must be either post or get.");
+  }
+
+  if (changedRef.current && typeof changedRef.current !== "function") {
+    throw Error("Invalid changed type, must be function.");
+  }
+
   useEffect(() => {
     let timeout;
-
-    if (!["get", "post"].includes(method)) {
-      setLoading(false);
-      setError("Invalid request method type, must be either post or get.");
-      return;
-    }
 
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();
