@@ -41,7 +41,7 @@ const useApi = ({
   if (method.toLowerCase) method = method.toLowerCase();
 
   if (!["get", "post"].includes(method)) {
-    throw Error("Invalid request method type, must be either post or get.")
+    throw Error("Invalid request method type, must be either post or get.");
   }
 
   if (changedRef.current && typeof changedRef.current !== "function") {

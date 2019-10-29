@@ -183,7 +183,9 @@ describe("performs requests", () => {
       useApi({ url, payload, method: "POSTITNOTE" })
     );
 
-    expect(result.error.message).toEqual("Invalid request method type, must be either post or get.");
+    expect(result.error.message).toEqual(
+      "Invalid request method type, must be either post or get."
+    );
   });
 
   it("should error when garbage in method type", async () => {
@@ -193,7 +195,9 @@ describe("performs requests", () => {
       useApi({ url, payload, method: { something: "wrong" } })
     );
 
-    expect(result.error.message).toEqual("Invalid request method type, must be either post or get.");
+    expect(result.error.message).toEqual(
+      "Invalid request method type, must be either post or get."
+    );
   });
 
   it("should error when changed is not function", async () => {
@@ -202,7 +206,9 @@ describe("performs requests", () => {
 
     const { result } = renderHook(() => useApi({ url, changed: mockChanged }));
 
-    expect(result.error.message).toEqual("Invalid changed type, must be function.");
+    expect(result.error.message).toEqual(
+      "Invalid changed type, must be function."
+    );
   });
 
   // FUNCTIONAL TESTS
