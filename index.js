@@ -11,6 +11,7 @@ const useApi = ({
   method = "get",
   changed
 }) => {
+
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,28 @@ const useApi = ({
   const changedRef = useRef(changed);
   const payloadRef = useRef(payload);
   changedRef.current = changed;
+
+    
+  if (!apiEndpoint) {
+    throw Error("API endpoint not specified");
+  } else if (typeof apiEndpoint !== "string") {
+    throw Error("API endpoint not a string");
+  }
+
+  // checks apiEndpoint valid url
+  try {
+    const url = new URL(apiEndpoint);
+  }
+  catch(error) {
+    throw Error("API endpoint not valid url, check protocol");
+  }
+  
+
+  if (pollInterval < 0) {
+    throw Error("Negative value not valid poll interval");
+  } else if (isNaN(pollInterval)) {
+    throw Error("Invalid poll interval type, must be number");
+  }
 
   // Only apply the new payload if its really changed
   if (!isEqual(payload, payloadRef.current)) {
@@ -36,18 +59,6 @@ const useApi = ({
       setError("Invalid request method type, must be either post or get.");
       return;
     }
-
-    if (pollInterval && isNaN(pollInterval)) {
-      setLoading(false);
-      setError("Invalid poll interval type, must be a number.");
-      return;
-    }
-
-    if (typeof apiEndpoint !== "string") {
-      setLoading(false);
-      setError("apiEndpoint not a string");
-      return;
-    } 
 
     if (changedRef.current && typeof changedRef.current !== 'function') {
       setLoading(false);
@@ -117,5 +128,6 @@ const useApi = ({
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };
+
 
 module.exports = useApi;
