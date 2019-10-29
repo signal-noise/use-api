@@ -30,6 +30,9 @@ jobs:
           npm install
           npm run lint
 
+      # Windows environment currently has random case drive letter
+      # that Actions created.
+      # See more: https://github.com/actions/virtual-environments/issues/33
       - name: Test (Windows)
         if: matrix.os == 'windows-latest'
         run: |
