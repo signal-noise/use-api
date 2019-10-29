@@ -5,7 +5,7 @@ const isEqual = require("lodash.isequal");
 const { CancelToken } = axios;
 
 const useApi = ({
-  apiEndpoint,
+  url,
   pollInterval = 0,
   payload,
   method = "get",
@@ -20,22 +20,12 @@ const useApi = ({
   const changedRef = useRef(changed);
   const payloadRef = useRef(payload);
   changedRef.current = changed;
-
     
-  if (!apiEndpoint) {
-    throw Error("API endpoint not specified");
-  } else if (typeof apiEndpoint !== "string") {
-    throw Error("API endpoint not a string");
+  if (!url) {
+    throw Error("Url not specified");
+  } else if (typeof url !== "string") {
+    throw Error("Url not a string");
   }
-
-  // checks apiEndpoint valid url
-  try {
-    const url = new URL(apiEndpoint);
-  }
-  catch(error) {
-    throw Error("API endpoint not valid url, check protocol");
-  }
-  
 
   if (pollInterval < 0) {
     throw Error("Negative value not valid poll interval");
@@ -73,7 +63,7 @@ const useApi = ({
     setLoading(true);
 
     // Make call to the API
-    axios(apiEndpoint, {
+    axios(url, {
       method,
       cancelToken: source.token,
       ...(currentPayload &&
@@ -118,13 +108,14 @@ const useApi = ({
   }, [
     poll,
     setPoll,
-    apiEndpoint,
+    url,
     pollInterval,
     currentPayload,
     method,
     lastData,
     changedRef
   ]);
+
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
 };

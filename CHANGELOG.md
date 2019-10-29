@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.4.0
+
+- Changed: Renamed `apiEndpoint` to `url`.
+- Changed: Documentation.
+
 ## 0.3.0
 
 - Changed: Input arguments now a configuration object.
