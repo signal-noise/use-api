@@ -102,6 +102,8 @@ const PeopleSearch = () = {
 - `error`: A string representation of an error if it occurred during loading.
 - `refresh`: A function to call to re-request the data.
 
+Note that a developer error, for example passing garbage as the method, will throw an exception. An issue within the API request itself will set an error within the response.
+
 [npm-image]: https://img.shields.io/npm/v/@signal-noise/use-api.svg?style=flat-square&logo=react
 [npm-url]: https://npmjs.org/package/@signal-noise/use-api
 [npm-downloads-image]: https://img.shields.io/npm/dm/@signal-noise/use-api.svg

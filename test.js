@@ -18,7 +18,7 @@ describe("performs requests", () => {
     mock.restore();
   });
 
-  it("should fail if url is not set", async () => {
+  it("should error if url is not set", async () => {
     mock.onGet().reply(200, "response");
 
     const { result } = renderHook(() => useApi({}));
@@ -47,7 +47,7 @@ describe("performs requests", () => {
     );
   });
 
-  it("should fail if pollIntervals is less than zero", async () => {
+  it("should error if pollIntervals is less than zero", async () => {
     mock.onGet(url).reply(200, "response");
 
     const { result } = renderHook(() => useApi({ url, pollInterval: -1 }));
@@ -176,36 +176,33 @@ describe("performs requests", () => {
     expect(result.current.loading).toBeFalsy();
   });
 
-  it("warns about finding a bad string in method type", async () => {
+  it("should error when finding a bad string in method type", async () => {
     const payload = { query: "hello" };
 
     const { result } = renderHook(() =>
       useApi({ url, payload, method: "POSTITNOTE" })
     );
 
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.loading).toBeFalsy();
+    expect(result.error.message).toEqual("Invalid request method type, must be either post or get.");
   });
 
-  it("warns about garbage in method type", async () => {
+  it("should error when garbage in method type", async () => {
     const payload = { query: "hello" };
-    // mock.onGet(url).reply(200, "response");
 
     const { result } = renderHook(() =>
       useApi({ url, payload, method: { something: "wrong" } })
     );
 
-    expect(result.current.error).toBeTruthy();
-    expect(result.current.loading).toBeFalsy();
+    expect(result.error.message).toEqual("Invalid request method type, must be either post or get.");
   });
 
-  it("error when changed is not function", async () => {
+  it("should error when changed is not function", async () => {
     mock.onGet(url).reply(200, "response");
     const mockChanged = {};
 
     const { result } = renderHook(() => useApi({ url, changed: mockChanged }));
 
-    expect(result.current.error).toBeTruthy();
+    expect(result.error.message).toEqual("Invalid changed type, must be function.");
   });
 
   // FUNCTIONAL TESTS

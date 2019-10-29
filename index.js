@@ -40,20 +40,16 @@ const useApi = ({
 
   if (method.toLowerCase) method = method.toLowerCase();
 
+  if (!["get", "post"].includes(method)) {
+    throw Error("Invalid request method type, must be either post or get.")
+  }
+
+  if (changedRef.current && typeof changedRef.current !== "function") {
+    throw Error("Invalid changed type, must be function.");
+  }
+
   useEffect(() => {
     let timeout;
-
-    if (!["get", "post"].includes(method)) {
-      setLoading(false);
-      setError("Invalid request method type, must be either post or get.");
-      return;
-    }
-
-    if (changedRef.current && typeof changedRef.current !== "function") {
-      setLoading(false);
-      setError("Invalid changed type, must be function.");
-      return;
-    }
 
     // Create a token that we sign the request with so it can be cancelled if need be
     const source = CancelToken.source();
