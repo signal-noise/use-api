@@ -2,9 +2,6 @@ name: node-ci
 
 on: [push]
 
-env:
-  CI: true
-
 jobs:
   test:
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
@@ -12,7 +9,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10, 12]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v1
@@ -25,18 +22,10 @@ jobs:
       - name: Install latest npm
         run: npm install --global npm@latest
 
-      - name: npm install and lint
+      - name: npm install, lint and test
         run: |
           npm install
           npm run lint
-
-      - name: Test (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          cd ..
-          cd D:\a\use-api\use-api
-          npm test
-
-      - name: Test (Unix)
-        if: matrix.os != 'windows-latest'
-        run: npm test
+          npm test -- --ci
+        env:
+          CI: true
