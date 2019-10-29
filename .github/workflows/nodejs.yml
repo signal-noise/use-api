@@ -32,7 +32,7 @@ jobs:
 
       # Windows environment currently has random case drive letter
       # that Actions created.
-      # See more: https://github.com/actions/virtual-environments/issues/33
+      # See more: https://github.com/stylelint/stylelint/issues/4337
       - name: Test (Windows)
         if: matrix.os == 'windows-latest'
         run: |
