@@ -26,6 +26,8 @@ jobs:
         run: |
           npm install
           npm run lint
+        env:
+          CI: true
 
       - name: Test (Windows)
         if: matrix.os == 'windows-latest'
@@ -33,6 +35,10 @@ jobs:
           cd ..
           cd D:\a\use-api\use-api
           npm test
+        env:
+          CI: true
       - name: Test (Unix)
         if: matrix.os != 'windows-latest'
         run: npm test
+        env:
+          CI: true
