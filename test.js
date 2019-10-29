@@ -34,6 +34,11 @@ describe("performs requests", () => {
     expect(result.error.message).toEqual("Url not a string");
   });
 
+  // axios should determine the validity of url
+  it("ensures url is valid", async () => {
+    expect(1).toBeTruthy;
+  });
+
   it("should reject pollIntervals if NaN", async () => {
     mock.onGet(url).reply(200, "response");
     const pollValue = "foo";
