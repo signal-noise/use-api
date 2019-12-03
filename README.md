@@ -43,7 +43,7 @@ const PeopleList = () = {
   const { data, loading, error, refresh } = useApi({
     url: "https://some-api.com",
     pollInterval: 10000
-  )};
+  });
 
   const people = data.people || [];
 
