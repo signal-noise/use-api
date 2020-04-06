@@ -42,7 +42,7 @@ const useApi = ({
 
   // Only apply the new headers if its really changed
   if (!isEqual(headers, headersRef.current)) {
-    headersRef.current = payload;
+    headersRef.current = headers;
   }
   const currentHeaders = headersRef.current;
 
