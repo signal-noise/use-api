@@ -9,7 +9,8 @@ const useApi = ({
   pollInterval = 0,
   payload,
   method = "get",
-  changed
+  headers,
+  changed,
 }) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
@@ -18,6 +19,7 @@ const useApi = ({
   const lastData = useRef(data);
   const changedRef = useRef(changed);
   const payloadRef = useRef(payload);
+  const headersRef = useRef(headers);
   changedRef.current = changed;
 
   if (!url) {
@@ -37,6 +39,12 @@ const useApi = ({
     payloadRef.current = payload;
   }
   const currentPayload = payloadRef.current;
+
+  // Only apply the new headers if its really changed
+  if (!isEqual(headers, headersRef.current)) {
+    headersRef.current = payload;
+  }
+  const currentHeaders = headersRef.current;
 
   if (method.toLowerCase) method = method.toLowerCase();
 
@@ -64,9 +72,10 @@ const useApi = ({
       ...(currentPayload &&
         (method === "get"
           ? { params: currentPayload }
-          : { data: currentPayload }))
+          : { data: currentPayload })),
+      ...(currentHeaders && { headers: currentHeaders }),
     })
-      .then(response => {
+      .then((response) => {
         // Make sure there are no errors reported
         setError(null);
 
@@ -82,7 +91,7 @@ const useApi = ({
           setData(response.data);
         }
       })
-      .catch(thrown => {
+      .catch((thrown) => {
         // Only error on genuine errors, not cancellations
         if (!axios.isCancel(thrown)) setError(thrown.message);
       })
@@ -106,9 +115,10 @@ const useApi = ({
     url,
     pollInterval,
     currentPayload,
+    currentHeaders,
     method,
     lastData,
-    changedRef
+    changedRef,
   ]);
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
