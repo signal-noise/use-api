@@ -92,6 +92,7 @@ const PeopleSearch = () = {
 - `url` : Required - A URL to request data from.
 - `pollInterval` : Optional - How often to re-request updated data. Pass 0 to disable polling (the default behaviour).
 - `payload` : Optional - A data object to send with the request. If we are performing a GET request, it is appended into the querystring (e.g. `?keywords=hello`). If it is a POST request it is sent in the request body as JSON.
+- `headers` : Optional - A data object containing http headers to send with the request. This must be a simple object with key value pairs like `{ authorization: "Bearer abc" }`.
 - `method` : Optional - Set the request type, either `get` or `post`. (defaults to `get`)
 - `changed` : Optional - A function that is called if the data actually changed during the request. If this is specified, use-api does extra checking and compares old and new data. If data does not change, new data is not propagated and a redraw is saved. Please note, this may have performance repercussions if the data is large as it performs a deep comparison between new and old data to determine if they are equivalent.
 
