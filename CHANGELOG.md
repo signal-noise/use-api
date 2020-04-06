@@ -5,6 +5,7 @@ All notable changes to this project are documented in this file.
 ## UNRELEASED
 
 - Added: Further tests
+- Added: `headers` argument.
 
 ## 0.4.0
 
