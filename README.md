@@ -18,7 +18,7 @@ const { data, loading, error, refresh } = useApi({
   pollInterval: 10000,
   payload: { keywords: "hello" },
   method: "post",
-  changed: (data) => console.log("The data changed!", data),
+  changed: data => console.log("The data changed!", data)
 });
 ```
 

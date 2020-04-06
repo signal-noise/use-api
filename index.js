@@ -10,7 +10,7 @@ const useApi = ({
   payload,
   method = "get",
   headers,
-  changed,
+  changed
 }) => {
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
@@ -73,9 +73,9 @@ const useApi = ({
         (method === "get"
           ? { params: currentPayload }
           : { data: currentPayload })),
-      ...(currentHeaders && { headers: currentHeaders }),
+      ...(currentHeaders && { headers: currentHeaders })
     })
-      .then((response) => {
+      .then(response => {
         // Make sure there are no errors reported
         setError(null);
 
@@ -91,7 +91,7 @@ const useApi = ({
           setData(response.data);
         }
       })
-      .catch((thrown) => {
+      .catch(thrown => {
         // Only error on genuine errors, not cancellations
         if (!axios.isCancel(thrown)) setError(thrown.message);
       })
@@ -118,7 +118,7 @@ const useApi = ({
     currentHeaders,
     method,
     lastData,
-    changedRef,
+    changedRef
   ]);
 
   return { data, loading, changed, error, refresh: () => setPoll(poll + 1) };
