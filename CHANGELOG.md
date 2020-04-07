@@ -6,6 +6,7 @@ All notable changes to this project are documented in this file.
 
 - Added: Further tests
 - Added: `headers` argument.
+- Changed: NPM dependency updates.
 
 ## 0.4.0
 

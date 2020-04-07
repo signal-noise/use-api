@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10, 12]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v1
@@ -25,21 +25,11 @@ jobs:
       - name: Install latest npm
         run: npm install --global npm@latest
 
-      - name: npm install and lint
-        run: |
-          npm install
-          npm run lint
+      - name: npm install
+        run: npm install
 
-      # Windows environment currently has random case drive letter
-      # that Actions created.
-      # See more: https://github.com/stylelint/stylelint/issues/4337
-      - name: Test (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          cd ..
-          cd D:\a\use-api\use-api
-          npm test
+      - name: Linting
+        run: npm run lint
 
-      - name: Test (Unix)
-        if: matrix.os != 'windows-latest'
+      - name: Testing
         run: npm test

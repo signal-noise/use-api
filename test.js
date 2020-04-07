@@ -66,7 +66,7 @@ describe("performs requests", () => {
     const payload = { query: "hello" };
     mock
       .onGet(url)
-      .reply(config =>
+      .reply((config) =>
         config.params.query === "hello" ? [200, "response"] : [400, "error"]
       );
 
@@ -253,7 +253,7 @@ describe("performs requests", () => {
     const payload = { query: "hello" };
     mock
       .onGet(url)
-      .reply(config =>
+      .reply((config) =>
         config.params.query === "hello" ? [200, "response"] : [400, "error"]
       );
 
@@ -339,13 +339,13 @@ describe("performs requests", () => {
     mock.onPost(url, payload).reply(200, "response");
 
     const { result, waitForNextUpdate, rerender } = renderHook(
-      props => useApi(props),
+      (props) => useApi(props),
       {
         initialProps: {
           url,
           payload: payload,
-          method: "post"
-        }
+          method: "post",
+        },
       }
     );
 
@@ -359,7 +359,7 @@ describe("performs requests", () => {
     rerender({
       url,
       payload: payload2,
-      method: "post"
+      method: "post",
     });
 
     await waitForNextUpdate();
@@ -437,16 +437,16 @@ describe("performs requests", () => {
     mock.onGet(url + "2").reply(200, "response2");
 
     const { result, waitForNextUpdate, rerender } = renderHook(
-      props => useApi(props),
+      (props) => useApi(props),
       {
         initialProps: {
-          url
-        }
+          url,
+        },
       }
     );
 
     rerender({
-      url: url + "2"
+      url: url + "2",
     });
 
     await waitForNextUpdate();
@@ -459,7 +459,7 @@ describe("performs requests", () => {
     const payload = { query: ["hello", "world", ["abc"]] };
     mock
       .onGet(url)
-      .reply(config =>
+      .reply((config) =>
         config.params.query[2][0] === "abc" ? [200, "response"] : [400, "error"]
       );
 
@@ -479,7 +479,7 @@ describe("performs requests", () => {
   it("supports custom http headers via POST", async () => {
     const headers = { authorization: `Bearer abc` };
 
-    mock.onPost(url).reply(config => {
+    mock.onPost(url).reply((config) => {
       if (config.headers.authorization === headers.authorization) {
         return [200, "response"];
       } else {
@@ -503,7 +503,7 @@ describe("performs requests", () => {
   it("supports custom http headers via GET", async () => {
     const headers = { authorization: `Bearer abc` };
 
-    mock.onGet(url).reply(config => {
+    mock.onGet(url).reply((config) => {
       if (config.headers.authorization === headers.authorization) {
         return [200, "response"];
       } else {
@@ -528,7 +528,7 @@ describe("performs requests", () => {
     const headers = { authorization: `Bearer abc` };
     const headers2 = { authorization: `Bearer def` };
 
-    mock.onGet(url).reply(config => {
+    mock.onGet(url).reply((config) => {
       if (config.headers.authorization === headers.authorization) {
         return [200, "response"];
       } else if (config.headers.authorization === headers2.authorization) {
@@ -539,12 +539,12 @@ describe("performs requests", () => {
     });
 
     const { result, waitForNextUpdate, rerender } = renderHook(
-      props => useApi(props),
+      (props) => useApi(props),
       {
         initialProps: {
           url,
-          headers
-        }
+          headers,
+        },
       }
     );
 
@@ -555,7 +555,7 @@ describe("performs requests", () => {
 
     rerender({
       url,
-      headers: headers2
+      headers: headers2,
     });
 
     await waitForNextUpdate();
